@@ -1,7 +1,7 @@
 Unmix GUI
 =========
 
-Licence
+License
 -------
 
-MIT, see `LICENCE <LICENCE>`_ file.
+MIT, see `LICENSE <LICENSE>`_ file.
