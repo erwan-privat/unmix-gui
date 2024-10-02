@@ -10,5 +10,5 @@ Goal
 ----
 
 Provides a Graphical User Interface in Qt to process musical
-files through `OpenUnmix
-<https://sigsep.github.io/open-unmix/>`_ algorithm.
+files through `Open-Unmix
+<https://sigsep.github.io/open-unmix/>`_ implementation.
