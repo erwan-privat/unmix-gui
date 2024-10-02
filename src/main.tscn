@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://c8kykp6wy0lvs"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_nkupt"]
-[ext_resource type="Script" path="res://files.gd" id="2_1incf"]
+[ext_resource type="Script" path="res://menu_bar.gd" id="2_dq8v7"]
 
 [node name="Main" type="PanelContainer"]
 anchors_preset = 15
@@ -16,15 +16,7 @@ layout_mode = 2
 
 [node name="MenuBar" type="MenuBar" parent="VBoxContainer"]
 layout_mode = 2
-
-[node name="Files" type="PopupMenu" parent="VBoxContainer/MenuBar"]
-script = ExtResource("2_1incf")
-
-[node name="Open" type="FileDialog" parent="VBoxContainer/MenuBar/Files"]
-title = "Open File(s)"
-ok_button_text = "Open"
-file_mode = 1
-access = 2
+script = ExtResource("2_dq8v7")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
