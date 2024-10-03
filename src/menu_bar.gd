@@ -1,5 +1,7 @@
 extends MenuBar
 
+const GITHUB := "https://github.com/erwan-privat/unmix-gui"
+
 const SEP := "-"
 const SK := "shortcut"
 const CB := "callback"
@@ -34,22 +36,23 @@ func _ready() -> void:
 		var pop := PopupMenu.new()
 		pop.name = m
 
-		var ix:= 0
+		#var ix:= 0
 		for key in menu[m]:
 			if key == SEP:
 				pop.add_separator()
 			else:
-				var sc = Shortcut.new()
+				
 				pop.add_item(key)
 				# FIXME setup shortcuts
+				#var sc = Shortcut.new()
 				#pop.set_item_shortcut(ix, Shortcut.new())
-			++ix
+			#++ix
 
 		pop.index_pressed.connect(func (i: int):
 			var sm = menu[m].keys()[i]
 			menu[m][sm].callback.call()
 		)
-		%MenuBar.add_child(pop)
+		add_child(pop)
 
 
 func _on_index_pressed(cat, index) -> void:
@@ -68,7 +71,20 @@ func _on_files_quit() -> void:
 
 
 func _on_help_github() -> void:
+	OS.shell_open(GITHUB)
+	#var help := AcceptDialog.new()
 	pass
 
+
 func _on_help_about() -> void:
-	print("Made by Erwan Privat, more info on G")
+	#FIXME Dialog with about text
+	var about = "Made by Erwan Privat, more info on " \
+			+ GITHUB
+	print(about)
+	# var rt := RichTextLabel.new()
+	# rt.text = about
+	# var pu := PopupPanel.new()
+	# pu.add_child(rt)
+	# add_child(pu)
+	# pu.show()
+	
