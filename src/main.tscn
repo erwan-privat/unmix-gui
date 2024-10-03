@@ -15,6 +15,7 @@ script = ExtResource("1_nkupt")
 layout_mode = 2
 
 [node name="MenuBar" type="MenuBar" parent="VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 script = ExtResource("2_dq8v7")
 
