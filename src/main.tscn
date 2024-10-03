@@ -15,32 +15,121 @@ script = ExtResource("1_nkupt")
 layout_mode = 2
 
 [node name="MenuBar" type="MenuBar" parent="VBoxContainer"]
+custom_minimum_size = Vector2(20, 0)
 layout_mode = 2
 script = ExtResource("2_dq8v7")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Audio source file"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="SourceTxt" type="LineEdit" parent="VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Source path"
+
+[node name="SourceBtn" type="Button" parent="VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Browse..."
+
+[node name="Label3" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Converted WAV (optional)"
+
+[node name="KeepWavBtn" type="CheckButton" parent="VBoxContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Keep converted WAV after unmix"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="WavPathTxt" type="LineEdit" parent="VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "WAV path"
+
+[node name="WabPathBtn" type="Button" parent="VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Browse..."
+
+[node name="Label2" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Destination folder"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="DirPathTxt" type="LineEdit" parent="VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Directory path"
+
+[node name="DirPathBtn" type="Button" parent="VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Browse..."
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="UnmixBtn" type="Button" parent="VBoxContainer/MarginContainer/VBoxContainer/MarginContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Unmix"
+
+[node name="Console" type="TextEdit" parent="VBoxContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ExplorerSC" type="ScrollContainer" parent="VBoxContainer/HBoxContainer"]
-clip_contents = false
-custom_minimum_size = Vector2(150, 0)
+[node name="HBoxContainer4" type="HBoxContainer" parent="VBoxContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="ItemList" type="ItemList" parent="VBoxContainer/HBoxContainer/ExplorerSC"]
-custom_minimum_size = Vector2(100, 0)
+[node name="AbortBtn" type="Button" parent="VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer4"]
+unique_name_in_owner = true
 layout_mode = 2
+text = "Abort"
 
-[node name="TextEdit" type="TextEdit" parent="VBoxContainer/HBoxContainer"]
+[node name="Control" type="Control" parent="VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer4"]
 layout_mode = 2
 size_flags_horizontal = 3
-editable = false
 
-[node name="QueueSC" type="ScrollContainer" parent="VBoxContainer/HBoxContainer"]
-clip_contents = false
-custom_minimum_size = Vector2(150, 0)
+[node name="QuitBtn" type="Button" parent="VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer4"]
+unique_name_in_owner = true
 layout_mode = 2
+text = "Quit"
 
-[node name="ItemList" type="ItemList" parent="VBoxContainer/HBoxContainer/QueueSC"]
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
+[connection signal="text_change_rejected" from="VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/SourceTxt" to="." method="_on_source_changed"]
+[connection signal="pressed" from="VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/SourceBtn" to="." method="_on_source_browse"]
+[connection signal="toggled" from="VBoxContainer/MarginContainer/VBoxContainer/KeepWavBtn" to="." method="_on_keepwav_toggle"]
+[connection signal="text_changed" from="VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer3/WavPathTxt" to="." method="_on_wav_changed"]
+[connection signal="pressed" from="VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer3/WabPathBtn" to="." method="_on_wav_browse"]
+[connection signal="text_changed" from="VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer2/DirPathTxt" to="." method="_on_dir_changed"]
+[connection signal="pressed" from="VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer2/DirPathBtn" to="." method="_on_dir_browse"]
+[connection signal="pressed" from="VBoxContainer/MarginContainer/VBoxContainer/MarginContainer/UnmixBtn" to="." method="_on_unmix"]

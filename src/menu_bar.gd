@@ -1,31 +1,55 @@
 extends MenuBar
+class_name Menu
 
 const GITHUB := "https://github.com/erwan-privat/unmix-gui"
 
-const SEP := "-"
-const SK := "shortcut"
-const CB := "callback"
+const SEP := &"-"
+const SK := &"shortcut"
+const CB := &"callback"
+
+const AUDIO_FILTERS := [
+		"*.*",
+		"*.aac",
+		"*.aiff",
+		"*.caf",
+		"*.flac",
+		"*.m4a",
+		"*.mp3",
+		"*.ogg",
+		"*.wav",
+		"*.wma",
+	]
 
 var menu = {
-	"Files": {
-		"Open...": {
-			SK: "open",
-			CB: _on_files_open,
+	&"Files": {
+		&"Open...": {
+			SK: &"open",
+			CB: _on_file_open,
 		},
+		# &"Open directory...": {
+		# 	SK: &"open",
+		# 	CB: _on_files_open_dir,
+		# },
 		SEP: null,
-		"Quit": {
-			SK: "quit",
+		&"Quit": {
+			SK: &"quit",
 			CB: _on_files_quit,
 		},	
 	},
-	"Help": {
-		"GitHub page (web)": {
-			SK: "github",
-			CB: _on_help_github,
+	&"Languages": {
+		&"English": {
+			SK: &"en",
+			CB: func(): _on_lang(&"en"),
 		},
-		"About": {
-			SK: "help",
-			CB: _on_help_about,
+		&"Français": {
+			SK: &"fr",
+			CB: func(): _on_lang(&"fr"),
+		},
+	},
+	&"Help": {
+		&"GitHub page...": {
+			SK: &"github",
+			CB: _on_help_github,
 		},
 	},
 }
@@ -46,7 +70,6 @@ func _ready() -> void:
 				# FIXME setup shortcuts
 				#var sc = Shortcut.new()
 				#pop.set_item_shortcut(ix, Shortcut.new())
-			#++ix
 
 		pop.index_pressed.connect(func (i: int):
 			var sm = menu[m].keys()[i]
@@ -55,36 +78,33 @@ func _ready() -> void:
 		add_child(pop)
 
 
-func _on_index_pressed(cat, index) -> void:
-	print(cat, index)
-	pass
-
-
-func _on_files_open() -> void:
+func _on_file_open() -> void:
 	var fd := FileDialog.new()
-	fd.file_mode = FileDialog.FILE_MODE_OPEN_FILES
+	fd.access = FileDialog.ACCESS_FILESYSTEM
+	fd.file_mode = FileDialog.FILE_MODE_OPEN_FILE
+	fd.set_filters(AUDIO_FILTERS)
+	fd.file_selected.connect(_on_file_selected)
 	fd.popup()
 
 
-func _on_files_quit() -> void:
-	get_node("/root/Main").quit()
+# func _on_files_open_dir() -> void:
+# 	var fd := FileDialog.new()
+# 	fd.access = FileDialog.ACCESS_FILESYSTEM
+# 	fd.file_mode = FileDialog.FILE_MODE_OPEN_DIR
+# 	fd.dir_selected.connect(_on_dir_selected)
+# 	fd.popup()
 
+
+func _on_files_quit() -> void:
+	$/root/Main.quit()
+
+
+func _on_lang(lang: StringName) -> void:
+	print("Changing language to ", lang)
 
 func _on_help_github() -> void:
 	OS.shell_open(GITHUB)
-	#var help := AcceptDialog.new()
-	pass
 
 
-func _on_help_about() -> void:
-	#FIXME Dialog with about text
-	var about = "Made by Erwan Privat, more info on " \
-			+ GITHUB
-	print(about)
-	# var rt := RichTextLabel.new()
-	# rt.text = about
-	# var pu := PopupPanel.new()
-	# pu.add_child(rt)
-	# add_child(pu)
-	# pu.show()
-	
+func _on_file_selected(path: String) -> void:
+	print(path)
