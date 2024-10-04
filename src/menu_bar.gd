@@ -35,7 +35,7 @@ var menu = {
 	# 		SK: &"quit",
 	# 		CB: _on_files_quit,
 	# 	},	
-	},
+	# },
 	&"Languages": {
 		&"English": {
 			SK: &"en",

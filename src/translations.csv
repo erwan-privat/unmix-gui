@@ -7,6 +7,7 @@ Audio source file,Fichier audio source
 Source path,Chemin du ficher source
 Browse...,Ouvrir...
 Converted WAV (optional),Emplacement du fichier WAV converti
+Keep converted WAV after unmix,Garder le fichier WAV après démix
 WAV path,Chemin du WAV
 Choose...,Choisir...
 Destination folder,Répertoire de destination
