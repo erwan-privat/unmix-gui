@@ -21,20 +21,20 @@ const AUDIO_FILTERS := [
 	]
 
 var menu = {
-	&"Files": {
-		&"Open...": {
-			SK: &"open",
-			CB: _on_file_open,
-		},
-		# &"Open directory...": {
-		# 	SK: &"open",
-		# 	CB: _on_files_open_dir,
-		# },
-		SEP: null,
-		&"Quit": {
-			SK: &"quit",
-			CB: _on_files_quit,
-		},	
+	# &"Files": {
+	# 	# &"Open...": {
+	# 	# 	SK: &"open",
+	# 	# 	CB: _on_file_open,
+	# 	# },
+	# 	# &"Open directory...": {
+	# 	# 	SK: &"open",
+	# 	# 	CB: _on_files_open_dir,
+	# 	# },
+	# 	SEP: null,
+	# 	&"Quit": {
+	# 		SK: &"quit",
+	# 		CB: _on_files_quit,
+	# 	},	
 	},
 	&"Languages": {
 		&"English": {
@@ -101,6 +101,7 @@ func _on_files_quit() -> void:
 
 func _on_lang(lang: StringName) -> void:
 	print("Changing language to ", lang)
+	TranslationServer.set_locale(lang)
 
 func _on_help_github() -> void:
 	OS.shell_open(GITHUB)

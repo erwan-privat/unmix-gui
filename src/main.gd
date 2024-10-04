@@ -5,14 +5,25 @@ const SLASH = "/"
 const DOT = "."
 const WAV = "wav"
 
+const CFG_PATH = "user://config.ini"
+const CFG_LANG = "lang"
+const CFG_LAST = "last"
+
 
 func _ready() -> void:
 	%AbortBtn.pressed.connect(abort)
 	%QuitBtn.pressed.connect(quit)
+	load_settings()
 
 func _process(_delta):
 	if Input.is_action_pressed("quit"):
 		quit()
+
+
+func _notification(what):
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		save_settings()
+		get_tree().quit()
 
 
 # Events #
@@ -87,6 +98,21 @@ func _on_unmix() -> void:
 
 # Main functions #
 
+
+func save_settings() -> void:
+	var cf := ConfigFile.new()
+	cf.set_value("", CFG_LANG, TranslationServer.get_locale())
+	cf.set_value("", CFG_LAST, %SourceTxt.text)
+	cf.save(CFG_PATH)
+
+
+func load_settings() -> void:
+	var cf := ConfigFile.new()
+	cf.load(CFG_PATH)
+	TranslationServer.set_locale(cf.get_value("", CFG_LANG))
+	%SourceTxt.text = cf.get_value("", CFG_LAST)
+
+
 ## Return an array containing the conversion from the string
 ## "/full/path/filename.ext" to ["/full/path", "filename",
 ## "ext"]
@@ -125,9 +151,10 @@ func error(msg: String) -> void:
 
 
 func abort() -> void:
-	print(tr("abort"))
+	print("abort")
 
 
 func quit() -> void:
 	print("quit")
-	get_tree().quit()
+	get_tree().root.propagate_notification(
+			NOTIFICATION_WM_CLOSE_REQUEST)
