@@ -14,6 +14,7 @@ const CFG_KEEP := "keep_wav"
 
 
 func _ready() -> void:
+	get_viewport().files_dropped.connect(_on_files_dropped)
 	%AbortBtn.pressed.connect(abort)
 	%QuitBtn.pressed.connect(quit)
 	load_settings()
@@ -25,12 +26,27 @@ func _process(_delta):
 
 
 func _notification(what):
-	if what == NOTIFICATION_WM_CLOSE_REQUEST:
-		save_settings()
-		get_tree().quit()
+	match what:
+		NOTIFICATION_WM_CLOSE_REQUEST:
+			print("close request")
+			save_settings()
+			get_tree().quit()
+		Node.NOTIFICATION_DRAG_BEGIN:
+			print("drag begin")
+		Node.NOTIFICATION_DRAG_END:
+			print("drag end")
 
 
 # Events #
+
+
+func _on_files_dropped(paths: PackedStringArray) -> void:
+	print("dropped ", paths)
+	if paths.size() > 1:
+		error(tr("Only drop one file"))
+		return
+
+	_on_source_changed(paths[0])
 
 
 func _on_source_browse() -> void:
@@ -41,6 +57,12 @@ func _on_source_browse() -> void:
 
 func _on_source_changed(path: String) -> void:
 	print("source changed to ", path)
+	if path.is_empty():
+		%SourceTxt.text = ""
+		%WavPathTxt.text = ""
+		%DirPathTxt.text = ""
+		return
+		
 	var seg := get_dir_name_ext(path)
 	var dir := seg[0]
 	var fna := seg[1]
@@ -48,8 +70,8 @@ func _on_source_changed(path: String) -> void:
 
 	%SourceTxt.text = path
 	%WavPathTxt.text = dir + SLASH + fna + DOT + WAV
-	%DirPathTxt.text = dir + SLASH + SUBDIR
-	print(get_dir_name_ext(path))
+	%DirPathTxt.text = dir + SLASH + fna + SLASH + SUBDIR
+
 
 func _on_keepwav_toggle(state: bool) -> void:
 	print("keep wav ", state)
@@ -63,7 +85,7 @@ func _on_wav_browse() -> void:
 
 func _on_wav_changed(path: String) -> void:
 	print("wav changed to ", path)
-	%WavPathTxt.txt = path
+	%WavPathTxt.text = path
 
 
 func _on_dir_browse() -> void:
@@ -104,6 +126,7 @@ func _on_unmix() -> void:
 
 
 func save_settings() -> void:
+	print("save settings")
 	var cf := ConfigFile.new()
 	cf.set_value("", CFG_LANG, TranslationServer.get_locale())
 	cf.set_value("", CFG_LAST, %SourceTxt.text)
@@ -112,6 +135,7 @@ func save_settings() -> void:
 
 
 func load_settings() -> void:
+	print("load settings")
 	var cf := ConfigFile.new()
 	cf.load(CFG_PATH)
 	TranslationServer.set_locale(cf.get_value("", CFG_LANG))
