@@ -104,6 +104,7 @@ func _on_lang(lang: StringName) -> void:
 	TranslationServer.set_locale(lang)
 
 func _on_help_github() -> void:
+	print("open github page")
 	OS.shell_open(GITHUB)
 
 

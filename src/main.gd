@@ -1,19 +1,23 @@
 extends PanelContainer
+class_name Main
 
 
-const SLASH = "/"
-const DOT = "."
-const WAV = "wav"
+const SLASH := "/"
+const DOT := "."
+const WAV := "wav"
+const SUBDIR := "unmix"
 
-const CFG_PATH = "user://config.ini"
-const CFG_LANG = "lang"
-const CFG_LAST = "last"
+const CFG_PATH := "user://config.ini"
+const CFG_LANG := "lang"
+const CFG_LAST := "last_source"
+const CFG_KEEP := "keep_wav"
 
 
 func _ready() -> void:
 	%AbortBtn.pressed.connect(abort)
 	%QuitBtn.pressed.connect(quit)
 	load_settings()
+
 
 func _process(_delta):
 	if Input.is_action_pressed("quit"):
@@ -44,7 +48,7 @@ func _on_source_changed(path: String) -> void:
 
 	%SourceTxt.text = path
 	%WavPathTxt.text = dir + SLASH + fna + DOT + WAV
-	%DirPathTxt.text = dir + SLASH
+	%DirPathTxt.text = dir + SLASH + SUBDIR
 	print(get_dir_name_ext(path))
 
 func _on_keepwav_toggle(state: bool) -> void:
@@ -103,6 +107,7 @@ func save_settings() -> void:
 	var cf := ConfigFile.new()
 	cf.set_value("", CFG_LANG, TranslationServer.get_locale())
 	cf.set_value("", CFG_LAST, %SourceTxt.text)
+	cf.set_value("", CFG_KEEP, %KeepWavBtn.button_pressed)
 	cf.save(CFG_PATH)
 
 
@@ -110,7 +115,11 @@ func load_settings() -> void:
 	var cf := ConfigFile.new()
 	cf.load(CFG_PATH)
 	TranslationServer.set_locale(cf.get_value("", CFG_LANG))
-	%SourceTxt.text = cf.get_value("", CFG_LAST)
+	var last = cf.get_value("", CFG_LAST)
+	var keep = cf.get_value("", CFG_KEEP)
+	%SourceTxt.text = last if last != null else ""
+	_on_source_changed(%SourceTxt.text)
+	%KeepWavBtn.button_pressed = keep if keep != null else false
 
 
 ## Return an array containing the conversion from the string
