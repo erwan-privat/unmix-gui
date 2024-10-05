@@ -12,6 +12,7 @@ WAV path,Chemin du WAV
 Choose...,Choisir...
 Destination folder,Répertoire de destination
 Directory path,Chemin du répertoire
+Open destination directory when done,Ouvrir le répertoire de destination une fois terminé
 Unmix,Démixer
 Abort,Annuler
 Quit,Quitter

@@ -6,11 +6,13 @@ const SLASH := "/"
 const DOT := "."
 const WAV := "wav"
 const SUBDIR := "unmix"
+const MP3 := "mp3"
 
 const CFG_PATH := "user://config.ini"
 const CFG_LANG := "lang"
 const CFG_LAST := "last_source"
 const CFG_KEEP := "keep_wav"
+const CFG_OPEN := "open_dir"
 
 
 func _ready() -> void:
@@ -70,7 +72,9 @@ func _on_source_changed(path: String) -> void:
 
 	%SourceTxt.text = path
 	%WavPathTxt.text = dir + SLASH + fna + DOT + WAV
-	%DirPathTxt.text = dir + SLASH + fna + SLASH + SUBDIR
+	%DirPathTxt.text = dir + SLASH + fna + SLASH
+
+	#FIXME check files/dir exists
 
 
 func _on_keepwav_toggle(state: bool) -> void:
@@ -119,6 +123,17 @@ func _on_browse(mode: FileDialog.FileMode,
 
 
 func _on_unmix() -> void:
+	var src_path := %SourceTxt.text as String
+	var dir_fn_ext := get_dir_name_ext(src_path)
+	var conv := false
+
+	match dir_fn_ext[2].to_lower():
+		MP3:
+			conv = true
+
+	if conv:
+		convert_wav()
+
 	unmix()
 
 
@@ -131,6 +146,7 @@ func save_settings() -> void:
 	cf.set_value("", CFG_LANG, TranslationServer.get_locale())
 	cf.set_value("", CFG_LAST, %SourceTxt.text)
 	cf.set_value("", CFG_KEEP, %KeepWavBtn.button_pressed)
+	cf.set_value("", CFG_OPEN, %OpenDirBtn.button_pressed)
 	cf.save(CFG_PATH)
 
 
@@ -141,9 +157,13 @@ func load_settings() -> void:
 	TranslationServer.set_locale(cf.get_value("", CFG_LANG))
 	var last = cf.get_value("", CFG_LAST)
 	var keep = cf.get_value("", CFG_KEEP)
+	var open = cf.get_value("", CFG_OPEN)
 	%SourceTxt.text = last if last != null else ""
 	_on_source_changed(%SourceTxt.text)
-	%KeepWavBtn.button_pressed = keep if keep != null else false
+	%KeepWavBtn.button_pressed = \
+			keep if keep != null else false
+	%OpenDirBtn.button_pressed = \
+			open if open != null else false
 
 
 ## Return an array containing the conversion from the string
@@ -158,8 +178,15 @@ func get_dir_name_ext(path: String) -> Array[String]:
 	return [dir, fn, ext]
 
 
+func convert_wav() -> void:
+	var src = %SourceTxt.text
+	var wav = %WavPathTxt.text
+	print("Converting ", src, " to ", wav)
+
+
 func unmix() -> void:
 	var src_path = %SourceTxt.text
+
 	var wav_path = %WavPathTxt.text
 	var dir_path = %DirPathTxt.text
 
