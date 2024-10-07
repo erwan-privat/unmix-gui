@@ -4,8 +4,8 @@ class_name Main
 
 const SLASH := "/"
 const DOT := "."
-const WAV := "wav"
 const SUBDIR := "unmix"
+const WAV := "wav"
 const MP3 := "mp3"
 
 const CFG_PATH := "user://config.ini"
@@ -15,11 +15,18 @@ const CFG_KEEP := "keep_wav"
 const CFG_OPEN := "open_dir"
 
 
+var _thread: Thread
+var _pipe: FileAccess
+var _perr: FileAccess
+var _pid: int = 0
+
+
 func _ready() -> void:
-	get_viewport().files_dropped.connect(_on_files_dropped)
 	%AbortBtn.pressed.connect(abort)
 	%QuitBtn.pressed.connect(quit)
+	get_viewport().files_dropped.connect(_on_files_dropped)
 	load_settings()
+	reset_ui()
 
 
 func _process(_delta):
@@ -32,11 +39,8 @@ func _notification(what):
 		NOTIFICATION_WM_CLOSE_REQUEST:
 			print("close request")
 			save_settings()
+			if _pipe: _pipe.close()
 			get_tree().quit()
-		Node.NOTIFICATION_DRAG_BEGIN:
-			print("drag begin")
-		Node.NOTIFICATION_DRAG_END:
-			print("drag end")
 
 
 # Events #
@@ -45,7 +49,7 @@ func _notification(what):
 func _on_files_dropped(paths: PackedStringArray) -> void:
 	print("dropped ", paths)
 	if paths.size() > 1:
-		error(tr("Only drop one file"))
+		error("Please only drop one file.")
 		return
 
 	_on_source_changed(paths[0])
@@ -68,13 +72,18 @@ func _on_source_changed(path: String) -> void:
 	var seg := get_dir_name_ext(path)
 	var dir := seg[0]
 	var fna := seg[1]
-	# var ext := seg[2]
+	var ext := seg[2]
+
+	# FIXME hide or not, I know not
+	var already_wav =  ext.to_lower() == WAV
+	%WavContainer.visible = !already_wav
+	%KeepWavBtn.set_pressed_no_signal(already_wav)
 
 	%SourceTxt.text = path
 	%WavPathTxt.text = dir + SLASH + fna + DOT + WAV
 	%DirPathTxt.text = dir + SLASH + fna + SLASH
 
-	#FIXME check files/dir exists
+	# FIXME check files/dir exists
 
 
 func _on_keepwav_toggle(state: bool) -> void:
@@ -123,17 +132,8 @@ func _on_browse(mode: FileDialog.FileMode,
 
 
 func _on_unmix() -> void:
-	var src_path := %SourceTxt.text as String
-	var dir_fn_ext := get_dir_name_ext(src_path)
-	var conv := false
-
-	match dir_fn_ext[2].to_lower():
-		MP3:
-			conv = true
-
-	if conv:
-		convert_wav()
-
+	print("unmix")
+	%UnmixBtn.disabled = true
 	unmix()
 
 
@@ -154,7 +154,13 @@ func load_settings() -> void:
 	print("load settings")
 	var cf := ConfigFile.new()
 	cf.load(CFG_PATH)
-	TranslationServer.set_locale(cf.get_value("", CFG_LANG))
+	# FIXME create defaults more explicitly
+
+	var lang = cf.get_value("", CFG_LANG)
+	if lang == null:
+		lang = "en"
+
+	TranslationServer.set_locale(lang)
 	var last = cf.get_value("", CFG_LAST)
 	var keep = cf.get_value("", CFG_KEEP)
 	var open = cf.get_value("", CFG_OPEN)
@@ -178,15 +184,8 @@ func get_dir_name_ext(path: String) -> Array[String]:
 	return [dir, fn, ext]
 
 
-func convert_wav() -> void:
-	var src = %SourceTxt.text
-	var wav = %WavPathTxt.text
-	print("Converting ", src, " to ", wav)
-
-
 func unmix() -> void:
 	var src_path = %SourceTxt.text
-
 	var wav_path = %WavPathTxt.text
 	var dir_path = %DirPathTxt.text
 
@@ -198,23 +197,92 @@ func unmix() -> void:
 		return
 
 	var params := [src_path, wav_path, dir_path]
-	var output: Array[String]
 
+	%Progress.indeterminate = true
+	_thread = Thread.new()
+	_thread.start(shell.bind(params))
+	%AbortBtn.disabled = false
+
+
+func shell(params: Array) -> void:
 	print("executing unmix with params ", params)
-	OS.execute("./umx.sh", params, output, true)
-	%Console.text = output[0]
+
+	var dic := OS.execute_with_pipe("./umx.sh", params)
+	_pipe = dic.stdio
+	_perr = dic.stderr
+	_pid = dic.pid
+	print("process id ", _pid)
+	
+	while _pipe.is_open() and _pipe.get_error() == OK:
+		var c = char(_pipe.get_8())
+		if c == "[":
+			c = "[lb]"
+		elif c == "]":
+			c = "[rb]"
+		to_console.call_deferred(c)
+
+	to_console.call_deferred("[color=#ff8800]")
+	while _perr.is_open() and _perr.get_error() == OK:
+		to_console.call_deferred(char(_perr.get_8()))
+	to_console.call_deferred("[/color]")
+
+	finish_shell.call_deferred()
+
+
+func finish_shell() -> void:
+	if not %KeepWavBtn.button_pressed:
+		var wav = %WavPathTxt.text
+		clog("deleting " + wav)
+		OS.move_to_trash(wav)
+
+	if %OpenDirBtn.button_pressed:
+		var dir = %DirPathTxt.text
+		print("open ", dir)
+		OS.shell_open(dir)
+
+	reset_ui()
+
+
+func to_console(c: String):
+	# do not use append_text, for reparsing BBCode
+	%Console.text += c
+	# %Console.append_text(c)
+
+
+func clog(msg: String) -> void:
+	print("> ", msg)
+	%Console.append_text(msg + "\n")
 
 
 func error(msg: String) -> void:
 	printerr(msg)
-	OS.alert(msg)
+	var ed := %ErrorDialog
+	# OS.alert(msg)
+	ed.title = tr("Error")
+	ed.dialog_text = msg
+	ed.popup_centered()
 
 
 func abort() -> void:
 	print("abort")
+	if _pid != 0:
+		var err: Error = OS.kill(_pid)
+		if err != OK:
+			error("OS kill error " + str(err))
+		else:
+			clog("killed pid " + str(_pid))
+			_pid = 0
+			reset_ui()
+
+
+func reset_ui() -> void:
+	%Progress.indeterminate = false
+	%UnmixBtn.disabled = false
+	%AbortBtn.disabled = true
 
 
 func quit() -> void:
 	print("quit")
+	abort()
 	get_tree().root.propagate_notification(
 			NOTIFICATION_WM_CLOSE_REQUEST)

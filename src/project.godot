@@ -12,7 +12,10 @@ config_version=5
 
 config/name="unmix-gui-gd"
 run/main_scene="res://main.tscn"
+config/use_custom_user_dir=true
+config/custom_user_dir_name="unmix-gui"
 config/features=PackedStringArray("4.3", "GL Compatibility")
+run/low_processor_mode=true
 config/icon="res://icon.svg"
 
 [editor_plugins]

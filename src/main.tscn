@@ -48,25 +48,29 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Browse..."
 
-[node name="ConvertedLbl" type="Label" parent="MenuContentVBox/MarginContainer/MainVBox"]
+[node name="WavContainer" type="VBoxContainer" parent="MenuContentVBox/MarginContainer/MainVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ConvertedLbl" type="Label" parent="MenuContentVBox/MarginContainer/MainVBox/WavContainer"]
 layout_mode = 2
 text = "Converted WAV (optional)"
 
-[node name="WavHBox" type="HBoxContainer" parent="MenuContentVBox/MarginContainer/MainVBox"]
+[node name="WavHBox" type="HBoxContainer" parent="MenuContentVBox/MarginContainer/MainVBox/WavContainer"]
 layout_mode = 2
 
-[node name="WavPathTxt" type="LineEdit" parent="MenuContentVBox/MarginContainer/MainVBox/WavHBox"]
+[node name="WavPathTxt" type="LineEdit" parent="MenuContentVBox/MarginContainer/MainVBox/WavContainer/WavHBox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "WAV path"
 
-[node name="WavPathBtn" type="Button" parent="MenuContentVBox/MarginContainer/MainVBox/WavHBox"]
+[node name="WavPathBtn" type="Button" parent="MenuContentVBox/MarginContainer/MainVBox/WavContainer/WavHBox"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Choose..."
 
-[node name="KeepWavBtn" type="CheckButton" parent="MenuContentVBox/MarginContainer/MainVBox"]
+[node name="KeepWavBtn" type="CheckButton" parent="MenuContentVBox/MarginContainer/MainVBox/WavContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
@@ -92,6 +96,7 @@ text = "Choose..."
 
 [node name="OpenDirBtn" type="CheckButton" parent="MenuContentVBox/MarginContainer/MainVBox"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 size_flags_horizontal = 0
 text = "Open destination directory when done"
@@ -114,10 +119,13 @@ text = "Unmix"
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Console" type="TextEdit" parent="MenuContentVBox/MarginContainer/MainVBox"]
+[node name="Console" type="RichTextLabel" parent="MenuContentVBox/MarginContainer/MainVBox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+scroll_following = true
 
 [node name="FooterHBox" type="HBoxContainer" parent="MenuContentVBox/MarginContainer/MainVBox"]
 layout_mode = 2
@@ -125,6 +133,7 @@ layout_mode = 2
 [node name="AbortBtn" type="Button" parent="MenuContentVBox/MarginContainer/MainVBox/FooterHBox"]
 unique_name_in_owner = true
 layout_mode = 2
+disabled = true
 text = "Abort"
 
 [node name="Control" type="Control" parent="MenuContentVBox/MarginContainer/MainVBox/FooterHBox"]
@@ -136,11 +145,14 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Quit"
 
+[node name="ErrorDialog" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+
 [connection signal="text_changed" from="MenuContentVBox/MarginContainer/MainVBox/SourceHBox/SourceTxt" to="." method="_on_source_changed"]
 [connection signal="pressed" from="MenuContentVBox/MarginContainer/MainVBox/SourceHBox/SourceBtn" to="." method="_on_source_browse"]
-[connection signal="text_changed" from="MenuContentVBox/MarginContainer/MainVBox/WavHBox/WavPathTxt" to="." method="_on_wav_changed"]
-[connection signal="pressed" from="MenuContentVBox/MarginContainer/MainVBox/WavHBox/WavPathBtn" to="." method="_on_wav_browse"]
-[connection signal="toggled" from="MenuContentVBox/MarginContainer/MainVBox/KeepWavBtn" to="." method="_on_keepwav_toggle"]
+[connection signal="text_changed" from="MenuContentVBox/MarginContainer/MainVBox/WavContainer/WavHBox/WavPathTxt" to="." method="_on_wav_changed"]
+[connection signal="pressed" from="MenuContentVBox/MarginContainer/MainVBox/WavContainer/WavHBox/WavPathBtn" to="." method="_on_wav_browse"]
+[connection signal="toggled" from="MenuContentVBox/MarginContainer/MainVBox/WavContainer/KeepWavBtn" to="." method="_on_keepwav_toggle"]
 [connection signal="text_changed" from="MenuContentVBox/MarginContainer/MainVBox/DestinationHBox/DirPathTxt" to="." method="_on_dir_changed"]
 [connection signal="pressed" from="MenuContentVBox/MarginContainer/MainVBox/DestinationHBox/DirPathBtn" to="." method="_on_dir_browse"]
 [connection signal="pressed" from="MenuContentVBox/MarginContainer/MainVBox/MarginContainer/UnmixBtn" to="." method="_on_unmix"]
