@@ -12,10 +12,10 @@ Unnmix GUI permet d'utiliser `Open-Unmix
 <https://sigsep.github.io/open-unmix/>`_ et le modèle umx1
 pour décomposer un fichier audio musical en quatre pistes :
 
-  * percussions,
-  * basse,
-  * chant,
-  * autre.
+- percussions,
+- basse,
+- chant,
+- autre.
 
 Tous les formats audio sont supportés à partir du moment où
 `ffmpeg` peut les convertir. Le modèle est entraîné sur de
