@@ -156,3 +156,5 @@ unique_name_in_owner = true
 [connection signal="text_changed" from="MenuContentVBox/MarginContainer/MainVBox/DestinationHBox/DirPathTxt" to="." method="_on_dir_changed"]
 [connection signal="pressed" from="MenuContentVBox/MarginContainer/MainVBox/DestinationHBox/DirPathBtn" to="." method="_on_dir_browse"]
 [connection signal="pressed" from="MenuContentVBox/MarginContainer/MainVBox/MarginContainer/UnmixBtn" to="." method="_on_unmix"]
+[connection signal="pressed" from="MenuContentVBox/MarginContainer/MainVBox/FooterHBox/AbortBtn" to="." method="abort"]
+[connection signal="pressed" from="MenuContentVBox/MarginContainer/MainVBox/FooterHBox/QuitBtn" to="." method="quit"]

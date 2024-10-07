@@ -14,6 +14,7 @@ const CFG_LAST := "last_source"
 const CFG_KEEP := "keep_wav"
 const CFG_OPEN := "open_dir"
 
+const BUS := "master"
 
 var _thread: Thread
 var _pipe: FileAccess
@@ -22,8 +23,6 @@ var _pid: int = 0
 
 
 func _ready() -> void:
-	%AbortBtn.pressed.connect(abort)
-	%QuitBtn.pressed.connect(quit)
 	get_viewport().files_dropped.connect(_on_files_dropped)
 	load_settings()
 	reset_ui()
@@ -212,7 +211,7 @@ func shell(params: Array) -> void:
 	_perr = dic.stderr
 	_pid = dic.pid
 	print("process id ", _pid)
-	
+
 	while _pipe.is_open() and _pipe.get_error() == OK:
 		var c = char(_pipe.get_8())
 		if c == "[":
