@@ -2,6 +2,7 @@
 .godot/
 addons/
 umx/
+releases/
 
 *.import
 
