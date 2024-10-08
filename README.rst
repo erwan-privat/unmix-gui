@@ -23,6 +23,9 @@ la Pop, donc pour le Black Metal ça ne marchera pas bien,
 même si sur la plupart de mes tests le résultat est
 acceptable.
 
+Payez-moi un coup sur `Ko-Fi <https://ko-fi.com/eprivat/goal?g=0>`_
+si vous appréciez mon travail.
+
 À faire
 *******
 
@@ -39,6 +42,9 @@ musical files through the `Open-Unmix
 <https://sigsep.github.io/open-unmix/>`_ implementation
 using the umx1 training data. Works best for pop music, but
 tests on messy black metal tracks show acceptable results.
+
+Give me a tip on `Ko-Fi <https://ko-fi.com/eprivat/goal?g=0>`_
+if you like my work.
 
 TODO
 ****
