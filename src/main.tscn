@@ -74,6 +74,7 @@ text = "Choose..."
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
+button_pressed = true
 text = "Keep converted WAV after unmix"
 
 [node name="DestinationLbl" type="Label" parent="MenuContentVBox/MarginContainer/MainVBox"]
@@ -89,6 +90,10 @@ layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Directory path"
 
+[node name="DirLbl" type="Label" parent="MenuContentVBox/MarginContainer/MainVBox/DestinationHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+
 [node name="DirPathBtn" type="Button" parent="MenuContentVBox/MarginContainer/MainVBox/DestinationHBox"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -96,9 +101,9 @@ text = "Choose..."
 
 [node name="OpenDirBtn" type="CheckButton" parent="MenuContentVBox/MarginContainer/MainVBox"]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 size_flags_horizontal = 0
+button_pressed = true
 text = "Open destination directory when done"
 
 [node name="MarginContainer" type="MarginContainer" parent="MenuContentVBox/MarginContainer/MainVBox"]
@@ -123,9 +128,13 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+focus_mode = 2
+mouse_default_cursor_shape = 1
 theme_override_font_sizes/normal_font_size = 12
 bbcode_enabled = true
 scroll_following = true
+context_menu_enabled = true
+selection_enabled = true
 
 [node name="FooterHBox" type="HBoxContainer" parent="MenuContentVBox/MarginContainer/MainVBox"]
 layout_mode = 2

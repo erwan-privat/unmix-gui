@@ -80,7 +80,7 @@ func _on_source_changed(path: String) -> void:
 
 	%SourceTxt.text = path
 	%WavPathTxt.text = dir + SLASH + fna + DOT + WAV
-	%DirPathTxt.text = dir + SLASH + fna + SLASH
+	%DirPathTxt.text = dir + SLASH
 
 	# FIXME check files/dir exists
 
@@ -98,6 +98,9 @@ func _on_wav_browse() -> void:
 func _on_wav_changed(path: String) -> void:
 	print("wav changed to ", path)
 	%WavPathTxt.text = path
+	var seg := get_dir_name_ext(path)
+	var fna := seg[1]
+	%DirLbl.text = fna + SLASH
 
 
 func _on_dir_browse() -> void:
@@ -165,6 +168,8 @@ func load_settings() -> void:
 	var open = cf.get_value("", CFG_OPEN)
 	%SourceTxt.text = last if last != null else ""
 	_on_source_changed(%SourceTxt.text)
+	_on_wav_changed(%WavPathTxt.text)
+
 	%KeepWavBtn.button_pressed = \
 			keep if keep != null else false
 	%OpenDirBtn.button_pressed = \
@@ -174,7 +179,7 @@ func load_settings() -> void:
 ## Return an array containing the conversion from the string
 ## "/full/path/filename.ext" to ["/full/path", "filename",
 ## "ext"]
-func get_dir_name_ext(path: String) -> Array[String]:
+func get_dir_name_ext(path: String) -> PackedStringArray:
 	var segments := path.split(SLASH)
 	var dir := SLASH.join(segments.slice(0, -1))
 	var fn_seg := segments[-1].split(DOT)
@@ -186,7 +191,7 @@ func get_dir_name_ext(path: String) -> Array[String]:
 func unmix() -> void:
 	var src_path = %SourceTxt.text
 	var wav_path = %WavPathTxt.text
-	var dir_path = %DirPathTxt.text
+	var dir_path = %DirPathTxt.text + %DirLbl.text
 
 	if not (src_path and wav_path and dir_path) \
 			or src_path == "" \
@@ -194,6 +199,8 @@ func unmix() -> void:
 			or dir_path == "":
 		error("Invalid paths to unmix")
 		return
+
+	%Console.text = ""
 
 	var params := [src_path, wav_path, dir_path]
 
@@ -229,17 +236,28 @@ func shell(params: Array) -> void:
 
 
 func finish_shell() -> void:
+	_thread.wait_to_finish()
+
 	if not %KeepWavBtn.button_pressed:
-		var wav = %WavPathTxt.text
-		clog("deleting " + wav)
-		OS.move_to_trash(wav)
+		delete_temp_wav()
 
 	if %OpenDirBtn.button_pressed:
-		var dir = %DirPathTxt.text
-		print("open ", dir)
-		OS.shell_open(dir)
+		open_dir()
 
+	clog(tr("Done!"))
 	reset_ui()
+
+
+func delete_temp_wav() -> void:
+	var wav = %WavPathTxt.text
+	clog("deleting " + wav)
+	OS.move_to_trash(wav)
+
+
+func open_dir() -> void:
+	var dir = %DirPathTxt.text + %DirLbl.text
+	print("open ", dir)
+	OS.shell_open(dir)
 
 
 func to_console(c: String):

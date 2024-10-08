@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-conda="/home/archaoss/miniconda3/"
-umx="/home/archaoss/unmix/dist/umx/umx"
+umx="umx/umx"
 ffmpeg="ffmpeg -v error -y"
 
 echo ===========================
@@ -27,13 +26,13 @@ fi
 # source $conda/etc/profile.d/conda.sh
 # conda activate unmix
 echo "Unmixing '$src' in directory '$3'..."
-$umx "$src" --outdir "$3" --audio-backend sox --ext "$out_ext"
+$umx "$src" --outdir "$3" --audio-backend sox_io --ext ".$out_ext"
 
 if [[ "$is_mp3" == "true" ]]; then
-  for w in "$3"/*.wav; do
+  for w in "$3"/{drums,bass,vocals,other}.wav; do
     $ffmpeg -i "$w" "${w%.*}.mp3"
-    echo rm "$w"
+    rm "$w"
   done
 fi
 
-echo Done.
+echo Done in script.
