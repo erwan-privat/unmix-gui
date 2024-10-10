@@ -275,6 +275,7 @@ func error(msg: String) -> void:
 	printerr(msg)
 	var ed := %ErrorDialog
 	# OS.alert(msg)
+	# TODO move the tr call
 	ed.title = tr("Error")
 	ed.dialog_text = msg
 	ed.popup_centered()
@@ -285,6 +286,7 @@ func abort() -> void:
 	if _pid != 0:
 		var err: Error = OS.kill(_pid)
 		if err != OK:
+			# TODO add the tr call here
 			error("OS kill error " + str(err))
 		else:
 			clog("killed pid " + str(_pid))
