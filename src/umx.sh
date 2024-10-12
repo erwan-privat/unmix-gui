@@ -14,7 +14,7 @@ src_ext="${src##*.}"
 out_ext="$src_ext"
 is_mp3=false
 
-if [[ "$src_ext" == "mp3" ]]; then
+if [[ "$src_ext" == mp3 ]]; then
   is_mp3=true
   out_ext=wav
   echo "Converting file '$1' to '$2'..."
